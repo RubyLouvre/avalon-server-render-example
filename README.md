@@ -1,21 +1,25 @@
 # avalon-server-render-example
 avalon2+koa2的后端渲染例子
 
+npm install
+npm start
 
-引入最新版 avalon
-引入avalon仓库下的serve下的文件serveRender
 
-引入你定义VM的文件 (所有DOM操作要在回调里进行,不要出现 window, document, 方便能在nodejs环境中运行)
+------------
+后端渲染的流程
+
+1.  引入最新版 [avalon](https://github.com/RubyLouvre/avalon/tree/master/dist) 这里用avalon.modern体积少些
+2.  引入avalon仓库下的serve下的文件[serveRender.js](https://github.com/RubyLouvre/avalon/tree/master/src/server)
+3.  引入你定义VM的文件 (所有DOM操作要在回调里进行,不要出现 window, document, 方便能在nodejs环境中运行)
 对你的VM使用webpack进行打包 (目的是处理module.exports, require)
-
-引入你该页面的模板
-
-将VM与模板放进serveRender方法,得到一个对象,里面包含渲染好的HTML 及 要往前端发送的扫描区域
-
-> 扫描区域是指用ms-contoller或ms-important圈起来的部分
-> 扫描区域最好用html-minifier压缩一下,减少体积
+4.  引入你该页面的模板
+5. 将VM与模板放进serveRender方法,得到一个对象,里面包含渲染好的HTML(**A**) 及 一个包括所有模板的对象(**B**)
+6.  创建一个script标签引用avalon(可以略去)
+7.  创建一个script标签, 里面定义一个`avalon.serverTemplates`对象, 将**B**对象赋给它
+8.  将上面的标签与A页面,  赋给ctx.body发往前端 
 
 
+------
 
 ```javascript
 
@@ -27,14 +31,7 @@ var test = fs.readFileSync('./src/aaa.html', 'utf-8');
 var serveRender = require('./dist/serverRender')
 
 var obj = serveRender(vm, test)
-//压缩HTML
-for(var i in obj.templates){
-   obj.templates[i] = minify(obj.templates[i],{
-       collapseInlineTagWhitespace: true,
-       collapseWhitespace:true
-   })
-   
-}
+
 
 var files = JSON.stringify(obj.templates)
 

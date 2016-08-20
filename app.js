@@ -11,8 +11,6 @@ import koaStaticPlus from 'koa-static-plus'
 const app = new Koa()
 
 
-
-// 这里不起作用
 app.use(koaStaticPlus(path.join(__dirname, '/dist'), {
         pathPrefix: ''
 }))
