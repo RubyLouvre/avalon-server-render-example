@@ -2,6 +2,7 @@
 avalon2+koa2的后端渲染例子
 
 npm install
+
 npm start
 
 
