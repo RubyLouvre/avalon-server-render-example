@@ -10,7 +10,6 @@ import koaStaticPlus from 'koa-static-plus'
 
 const app = new Koa()
 
-
 app.use(koaStaticPlus(path.join(__dirname, '/dist'), {
         pathPrefix: ''
 }))
@@ -19,11 +18,13 @@ app.use(koaStaticPlus(path.join(__dirname, '/dist'), {
 //当前页面VM
 var vm = require('./src/vm')
 //当前页面模板
-var test = fs.readFileSync('./src/aaa.html', 'utf-8');
+var page = fs.readFileSync('./src/aaa.html', 'utf-8');
+
+
 //渲染器
 var serveRender = require('./dist/serverRender')
 
-var obj = serveRender(vm, test)
+var obj = serveRender(vm, page)
 
 for(var i in obj.templates){
    obj.templates[i] = minify(obj.templates[i],{
@@ -37,9 +38,9 @@ var files = JSON.stringify(obj.templates)
 
 
 
-var script = '<script src="./avalon.js"><\/script>' +
+var script = '<!document html><html><head><script src="./avalon.js"><\/script>' +
         '<script> avalon.serverTemplates= ' + files + '<\/script>' +
-        '<script src="./test.js"><\/script>'
+        '<script src="./vm.js"><\/script></head><body></body></html>'
 
 app.use(async function(ctx){
      await (ctx.body = script + obj.html)
