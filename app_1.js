@@ -1,6 +1,6 @@
 import Koa from 'koa'
 const views = require('koa-views');
-const avalon = require('./dist/avalon2.2');
+const avalon = require('./dist/avalon');
 const fs = require('fs');
 const path = require('path');
 import convert from 'koa-convert'
@@ -22,7 +22,7 @@ var page = fs.readFileSync('./src/aaa.html', 'utf-8');
 
 
 //渲染器
-var serveRender = require('./dist/serverRender2.2')
+var serveRender = require('./dist/serverRender')
 
 var obj = serveRender(vm, page)
 
@@ -37,16 +37,13 @@ for(var i in obj.templates){
 var files = JSON.stringify(obj.templates)
 
 
-var header = '<!document html><html><head>'+
-            '<script src="./avalon2.2.js"><\/script>'+
-           
-            '<script src="./vm.js"><\/script>'+
-            '<script> avalon.serverTemplates= ' + files + '<\/script>' +
-            '</head><body>'
-var footer = '</body></html>'
+
+var script = '<!document html><html><head><script src="./avalon.js"><\/script>' +
+        '<script> avalon.serverTemplates= ' + files + '<\/script>' +
+        '<script src="./vm.js"><\/script></head><body></body></html>'
 
 app.use(async function(ctx){
-     await (ctx.body = (header+ obj.html+ footer))
+     await (ctx.body = script + obj.html)
 })
 
 
